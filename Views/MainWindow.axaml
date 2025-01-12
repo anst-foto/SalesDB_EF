@@ -1,20 +1,94 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:SalesDB_EF.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        
         x:Class="SalesDB_EF.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        
         Icon="/Assets/avalonia-logo.ico"
         Title="SalesDB_EF">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <Window.DataContext>
         <vm:MainWindowViewModel/>
-    </Design.DataContext>
+    </Window.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <DockPanel LastChildFill="True">
+        <StackPanel Orientation="Horizontal"
+                    DockPanel.Dock="Top">
+            <Button Content="Refresh"
+                    Command="{Binding CommandRefresh}" />
+            <Button Content="Add product"
+                    Command="{Binding CommandAddProduct}" />
+            <Button Content="Add sale"
+                    Command="{Binding CommandAddSale}" />
+        </StackPanel>
+
+        <StackPanel IsVisible="{Binding IsFormAddProduct}"
+                    DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Name"
+                       Target="{Binding ElementName=InputProductName}" />
+                <TextBox x:Name="InputProductName"
+                         Text="{Binding ProductName}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Price"
+                       Target="{Binding ElementName=InputProductPrice}" />
+                <TextBox x:Name="InputProductPrice"
+                         Text="{Binding ProductPrice}" />
+            </StackPanel>
+
+            <Button Content="Save"
+                    Command="{Binding CommandSave}"
+                    CommandParameter="AddProduct" />
+        </StackPanel>
+
+        <StackPanel IsVisible="{Binding IsFormAddSale}"
+                    DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Product"
+                       Target="{Binding ElementName=InputSaleProduct}" />
+                <ComboBox x:Name="InputSaleProduct"
+                          ItemsSource="{Binding Products}"
+                          SelectedItem="{Binding SelectedProduct}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Amount"
+                       Target="{Binding ElementName=InputSaleAmount}" />
+                <TextBox x:Name="InputSaleAmount"
+                         Text="{Binding SaleAmount}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Date"
+                       Target="{Binding ElementName=InputSaleDate}" />
+                <DatePicker x:Name="InputSaleDate" 
+                            DayFormat="ddd dd"
+                            SelectedDate="{Binding SaleDate}"/>
+            </StackPanel>
+
+            <Button Content="Save"
+                    Command="{Binding CommandSave}"
+                    CommandParameter="AddSale" />
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Sales}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Date}"/>
+                <DataGridTextColumn Header="Product" Binding="{Binding Product.Name}"/>
+                <DataGridTextColumn Header="Product" Binding="{Binding Product.Price}"/>
+                <DataGridTextColumn Header="Product" Binding="{Binding Amount}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
 
 </Window>
